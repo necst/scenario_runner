@@ -242,6 +242,7 @@ class ScenarioRunner(object):
 
         # sync state
         CarlaDataProvider.perform_carla_tick()
+        print("Sync Mode Enabled:", CarlaDataProvider.is_sync_mode())
 
     def _analyze_scenario(self, config):
         """
@@ -273,6 +274,8 @@ class ScenarioRunner(object):
             self.world = self.client.load_world(town)
             settings = self.world.get_settings()
             settings.fixed_delta_seconds = 1.0 / self.frame_rate
+            # Enable synchronous mode
+            settings.synchronous_mode = True
             self.world.apply_settings(settings)
         else:
             # if the world should not be reloaded, wait at least until all ego vehicles are ready
