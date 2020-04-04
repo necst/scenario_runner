@@ -278,7 +278,11 @@ class ScenarioManager(object):
             if self._agent is not None:
                 self.ego_vehicles[0].apply_control(ego_action)
 
-        if self._agent and self._running and self._watchdog.get_status():
+        #if self._agent and self._running and self._watchdog.get_status():
+            #CarlaDataProvider.perform_carla_tick(self._timeout)
+
+        # without condition on agent
+        if self._running and self._watchdog.get_status():
             CarlaDataProvider.perform_carla_tick(self._timeout)
 
     def get_running_status(self):
