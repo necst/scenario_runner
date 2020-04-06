@@ -92,6 +92,46 @@ except ImportError:
 # -- World ---------------------------------------------------------------------
 # ==============================================================================
 
+import socket
+
+class Counter:
+    def __init__(self):
+        # ogni elemento della lista e' l'ultimo frame ricevuto per il sensore n, dove n e' l'indice nella lista
+        # ie: all_sensors[0] = 1 -> l'ultimo frame ricevuto per il sensore 0 e' 1
+        self.all_sensors = [0]  # 3 sensori
+        self.sensor_readings = [
+            [], # lista dei reading del sensore 0
+        ]
+        self.server = None
+        self.is_started = False
+
+    def received_sensor_n(self, n, reading):
+        if self.server is None:
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.connect(('127.0.0.1', 10423))
+            print('Connesso al server')
+        last_recv_frame = self.all_sensors[n]
+        if reading.frame_number > last_recv_frame + 1:
+            print('Errore, ricevuto frame number #' + str(reading.frame_number))
+        self.save_readings(n, reading)
+        self.all_sensors[n] = reading.frame_number
+        self.fire_if_all_equal()
+
+    def save_readings(self, n, reading):
+        if self.is_started:
+            print('reading is ' + str(reading))
+            self.sensor_readings[n].append(reading)
+            if len(self.sensor_readings[n]) > 2000:
+                print('maybe we should save')
+
+    def fire_if_all_equal(self):
+        first = self.all_sensors[0]
+        if len(self.all_sensors) > 1:
+            for n in self.all_sensors[1:]:
+                if n != first:
+                    return
+        self.is_started = True
+        self.server.send(bytes("OK", 'utf8'))
 
 def find_weather_presets():
     rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
@@ -107,6 +147,7 @@ def get_actor_display_name(actor, truncate=250):
 
 class World(object):
     def __init__(self, carla_world, hud):
+        self.counter = Counter()
         self.world = carla_world
         self.mapname = carla_world.get_map().name
         self.hud = hud
@@ -123,7 +164,7 @@ class World(object):
         self.vehicle_name = self.vehicle.type_id
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
-        self.camera_manager = CameraManager(self.vehicle, self.hud)
+        self.camera_manager = CameraManager(self.vehicle, self.hud, self.counter)
         self.camera_manager.set_sensor(0, notify=False)
         self.controller = None
         self._weather_presets = find_weather_presets()
@@ -456,6 +497,7 @@ class CollisionSensor(object):
     @staticmethod
     def _on_collision(weak_self, event):
         self = weak_self()
+        Counter().received_sensor_n(0, event)
         if not self:
             return
         actor_type = get_actor_display_name(event.other_actor)
@@ -500,7 +542,8 @@ class LaneInvasionSensor(object):
 
 
 class CameraManager(object):
-    def __init__(self, parent_actor, hud):
+    def __init__(self, parent_actor, hud, counter):
+        self.counter = counter
         self.sensor = None
         self._surface = None
         self._parent = parent_actor
@@ -566,6 +609,7 @@ class CameraManager(object):
     @staticmethod
     def _parse_image(weak_self, image):
         self = weak_self()
+        self.counter.received_sensor_n(0, image)
         if not self:
             return
         if self._sensors[self._index][0].startswith('sensor.lidar'):
@@ -616,7 +660,7 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(60)
+            #clock.tick_busy_loop(60)
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):
@@ -687,5 +731,5 @@ def main():
 
 
 if __name__ == '__main__':
-
+    SERVER_CONNECTION = None
     main()

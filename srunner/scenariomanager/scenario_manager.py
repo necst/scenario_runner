@@ -142,7 +142,8 @@ class ScenarioManager(object):
         self._running = False
         self._timestamp_last_run = 0.0
         self._timeout = timeout
-        self._watchdog = Watchdog(float(self._timeout))
+        #self._watchdog = Watchdog(float(self._timeout))
+        self._watchdog = Watchdog(float(10000))
 
         self.scenario_duration_system = 0.0
         self.scenario_duration_game = 0.0
@@ -278,7 +279,8 @@ class ScenarioManager(object):
             if self._agent is not None:
                 self.ego_vehicles[0].apply_control(ego_action)
 
-        if self._agent and self._running and self._watchdog.get_status():
+        #if self._agent and self._running and self._watchdog.get_status():
+        if self._running and self._watchdog.get_status():
             CarlaDataProvider.perform_carla_tick(self._timeout)
 
     def get_running_status(self):

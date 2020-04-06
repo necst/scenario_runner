@@ -20,6 +20,7 @@ from six import iteritems
 
 import carla
 
+from server import get_connection
 
 def calculate_velocity(actor):
     """
@@ -98,12 +99,23 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         Note: This is a workaround as CARLA tick() has no
               timeout functionality
         """
-        t = Thread(target=CarlaDataProvider._world.tick)
+        if get_connection() is not None:
+            print("GONNA WAIT ON CLIENT")
+            get_connection().recv(8)
+        t = Thread(target=CarlaDataProvider.pretty_world_tick)
         t.daemon = True
         t.start()
         t.join(float(timeout))
-        if t.is_alive():
+        if False and t.is_alive():
             raise RuntimeError("Timeout of CARLA tick command")
+
+    @staticmethod
+    def pretty_world_tick():
+        import time
+        #print("about to tick")
+        start = time.time()
+        CarlaDataProvider._world.tick()
+        #print("it took " + str(time.time() - start))
 
     @staticmethod
     def on_carla_tick():

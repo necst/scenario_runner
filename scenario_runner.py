@@ -59,6 +59,7 @@ from srunner.tools.route_parser import RouteParser
 # Version of scenario_runner
 VERSION = 0.6
 
+SERVER = None
 
 class ScenarioRunner(object):
 
@@ -242,7 +243,7 @@ class ScenarioRunner(object):
 
         # sync state
         CarlaDataProvider.perform_carla_tick()
-        print("Sync Mode Enabled:", CarlaDataProvider.is_sync_mode())
+        print("Sync Mode Enabled:", self.world.get_settings().synchronous_mode)
 
     def _analyze_scenario(self, config):
         """
@@ -274,8 +275,7 @@ class ScenarioRunner(object):
             self.world = self.client.load_world(town)
             settings = self.world.get_settings()
             settings.fixed_delta_seconds = 1.0 / self.frame_rate
-            # Enable synchronous mode
-            settings.synchronous_mode = True
+            settings.synchronous_mode = False
             self.world.apply_settings(settings)
         else:
             # if the world should not be reloaded, wait at least until all ego vehicles are ready
@@ -299,10 +299,11 @@ class ScenarioRunner(object):
         CarlaActorPool.set_world(self.world)
         CarlaDataProvider.set_world(self.world)
 
-        if self._args.agent:
-            settings = self.world.get_settings()
-            settings.synchronous_mode = True
-            self.world.apply_settings(settings)
+
+        settings = self.world.get_settings()
+        settings.synchronous_mode = True
+        settings.fixed_delta_seconds = 1.0 / self.frame_rate
+        self.world.apply_settings(settings)
 
         # Wait for the world to be ready
         if self.world.get_settings().synchronous_mode:
@@ -633,4 +634,12 @@ def main():
 
 
 if __name__ == "__main__":
+    import socket
+    import server
+    server.setup()
+
+    import threading
+    t = threading.Thread(target=server.wait_for_client_connection)
+    t.setDaemon(True)
+    t.start()
     sys.exit(main())
