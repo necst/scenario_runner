@@ -101,7 +101,10 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
         """
         if get_connection() is not None:
             print("GONNA WAIT ON CLIENT")
-            get_connection().recv(8)
+            try:
+                get_connection().recv(8)
+            except:
+                print("The socket connection terminated (or had problems)!")
         t = Thread(target=CarlaDataProvider.pretty_world_tick)
         t.daemon = True
         t.start()

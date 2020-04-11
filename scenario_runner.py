@@ -265,6 +265,8 @@ class ScenarioRunner(object):
             print("Success!")
         else:
             print("Failure!")
+        server.close_connection()
+
 
     def _load_and_wait_for_world(self, town, ego_vehicles=None):
         """

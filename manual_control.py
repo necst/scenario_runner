@@ -52,6 +52,7 @@ import math
 import re
 import time
 import weakref
+import threading
 
 try:
     import pygame
@@ -104,18 +105,21 @@ class Counter:
         ]
         self.server = None
         self.is_started = False
+        self.never_created = True
 
     def received_sensor_n(self, n, reading):
-        if self.server is None:
+        if self.never_created:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.connect(('127.0.0.1', 10423))
             print('Connesso al server')
+            self.never_created = False
         last_recv_frame = self.all_sensors[n]
         if reading.frame_number > last_recv_frame + 1:
             print('Errore, ricevuto frame number #' + str(reading.frame_number))
         self.save_readings(n, reading)
         self.all_sensors[n] = reading.frame_number
         self.fire_if_all_equal()
+
 
     def save_readings(self, n, reading):
         if self.is_started:
@@ -131,7 +135,10 @@ class Counter:
                 if n != first:
                     return
         self.is_started = True
-        self.server.send(bytes("OK", 'utf8'))
+        if self.server is not None:
+            self.server.send(bytes("OK", 'utf8'))
+        else:
+            print("socket server not defined.")
 
 def find_weather_presets():
     rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
@@ -536,6 +543,8 @@ class LaneInvasionSensor(object):
         self._hud.notification('Crossed line %s' % ' and '.join(text))
 
 
+
+
 # ==============================================================================
 # -- CameraManager -------------------------------------------------------------
 # ==============================================================================
@@ -645,6 +654,7 @@ def game_loop(args):
     pygame.init()
     pygame.font.init()
     world = None
+    t = None
 
     try:
         client = carla.Client(args.host, args.port)
@@ -658,12 +668,24 @@ def game_loop(args):
         world = World(client.get_world(), hud)
         controller = KeyboardControl(world, args.autopilot)
 
+        def scenario_was_terminated():
+            print("Waiting for scenario to end ...")
+            while world.counter.server is None:
+                time.sleep(1)
+            world.counter.server.recv(8)
+            world.counter.server = None
+
+        t = threading.Thread(target=scenario_was_terminated)
+        t.start()
+
         clock = pygame.time.Clock()
         while True:
             #clock.tick_busy_loop(60)
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):
+                return
+            if world.counter.server is None and not world.counter.never_created:
                 return
             world.render(display)
             pygame.display.flip()
@@ -672,6 +694,9 @@ def game_loop(args):
 
         if world is not None:
             world.destroy()
+
+        if t is not None:
+            t.join(timeout=10.0)
 
         pygame.quit()
 
@@ -732,4 +757,6 @@ def main():
 
 if __name__ == '__main__':
     SERVER_CONNECTION = None
+
     main()
+
