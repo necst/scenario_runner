@@ -54,6 +54,7 @@ import time
 import weakref
 import threading
 import csv
+from threading import Lock
 
 try:
     import pygame
@@ -95,6 +96,7 @@ except ImportError:
 # ==============================================================================
 
 import socket
+import os.path
 
 class Counter:
     def __init__(self):
@@ -108,21 +110,44 @@ class Counter:
         self.server = None
         self.is_started = False
         self.never_created = True
+        self.mutex = Lock()
+        self.file_to_write = open(os.path.join("C:/_out/","sensors_log.csv"), "w", newline="")
+        print("Opened file: " + str(self.file_to_write))
+        self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
 
     def received_sensor_n(self, n, reading):
+        self.mutex.acquire()
         if self.never_created:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.connect(('127.0.0.1', 10423))
             print('Connesso al server')
             self.never_created = False
 
-        #print('RECV FRAME ' + str(reading))
+        print('RECV FRAME ' + str(reading))
         last_recv_frame = self.all_sensors[n]
         if reading.frame_number > last_recv_frame + 1:
             print('Errore, ricevuto frame number #' + str(reading.frame_number))
         self.all_sensors[n] = reading.frame_number
-        self.sensor_readings[n].append(reading)
+        if n == 0: # imu
+            out = {
+                "frame": reading.frame_number,
+                "timestamp": reading.timestamp,
+                "acc": (reading.accelerometer.x, reading.accelerometer.y, reading.accelerometer.z),
+                "gyr": (reading.gyroscope.x, reading.gyroscope.y, reading.gyroscope.z),
+            }
+        elif n == 1: # gnss
+           out = {
+               "frame": reading.frame_number,
+               "timestamp": reading.timestamp,
+               "lat": reading.latitude,
+               "lon": reading.longitude,
+           }
+        #self.sensor_readings[n].append(reading)
+        self.sensor_readings[n].append(out)
+        print(self.sensor_readings[n])
         if self.is_all_equal():
+            print("ALL EQUAL:")
+            print(self.all_sensors[0], self.all_sensors[1])
             self.read_readings()
             self.send_tick()
         elif not self.is_started:
@@ -131,6 +156,7 @@ class Counter:
             self.sensor_readings = [[], []]
             print('NOT ALL RECEIVED, SENDING 1 GRACE TICK')
             self.send_tick()
+        self.mutex.release()
 
     def read_readings(self):
         # when this function is called, sensor_readings contains all readings from sensors
@@ -143,11 +169,15 @@ class Counter:
         if len_s0 != len_s1:
             print("ERROR ERROR ERROR")
         elif len_s0 >= 100:
-            print('saving in progress, len is ' + str(len_s0))
+            print('Saving in progress, len is ' + str(len_s0))
+            #rows = zip(self.sensor_readings[0], self.sensor_readings[1])
+            #[list(pair) for pair in zip(car_id, car_xy)]
+            rows = [{**pair[0], **pair[1]} for pair in zip(self.sensor_readings[0], self.sensor_readings[1])]
+            self.dict_writer.writeheader()
+            self.dict_writer.writerows(rows)
+                    #self.file_writer.writerow(data)
+            print("Progress saved, resetting sensor readings.")
             self.sensor_readings = [[], []]
-                #with open("imu.csv", 'w', newline='') as myfile:
-                    #wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-                    #wr.writerow(self.sensor_readings[n])
 
     def is_all_equal(self):
         first = self.all_sensors[0]
@@ -155,6 +185,7 @@ class Counter:
             for n in self.all_sensors[1:]:
                 if n != first:
                     return False
+        print("( %s, %s )" % (self.all_sensors[0], self.all_sensors[1]))
         return True
 
     def send_tick(self):
@@ -162,6 +193,18 @@ class Counter:
             self.server.send(bytes("OK", 'utf8'))
         else:
             print("socket server not defined.")
+
+    def await_and_close(self):
+        while self.never_created:  # wait until server is created & connected
+            time.sleep(1)
+        print("Socket created, now gonna wait for recv.")
+        self.server.recv(8)  # wait until "OK" is received from server
+        print("Received from server command to quit.")
+        self.server.close()
+        self.file_to_write.close()
+        print("Closed file.")
+        self.server = None
+
 
 def find_weather_presets():
     rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
@@ -195,6 +238,7 @@ class World(object):
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
         self.imu_sensor = IMUSensor(self.vehicle, self.counter)
+        self.gnss_sensor = GnssSensor(self.vehicle, self.counter)
         self.camera_manager = CameraManager(self.vehicle, self.hud, self.counter)
         self.camera_manager.set_sensor(0, notify=False)
         self.controller = None
@@ -214,6 +258,7 @@ class World(object):
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
         self.imu_sensor = IMUSensor(self.vehicle)
+        self.gnss_sensor = GnssSensor(self.vehicle)
         self.camera_manager = CameraManager(self.vehicle, self.hud)
         self.camera_manager._transform_index = cam_pos_index
         self.camera_manager.set_sensor(cam_index, notify=False)
@@ -245,6 +290,7 @@ class World(object):
             self.collision_sensor.sensor,
             self.lane_invasion_sensor.sensor,
             self.imu_sensor.sensor,
+            self.gnss_sensor.sensor,
             self.vehicle]
         for actor in actors:
             if actor is not None:
@@ -594,7 +640,7 @@ class IMUSensor(object):
     @staticmethod
     def _IMU_callback(weak_self, sensor_data):
         self = weak_self()
-        self.counter.received_sensor_n(1, sensor_data)
+        self.counter.received_sensor_n(0, sensor_data)
         if not self:
             return
         limits = (-99.9, 99.9)
@@ -607,6 +653,36 @@ class IMUSensor(object):
             max(limits[0], min(limits[1], math.degrees(sensor_data.gyroscope.y))),
             max(limits[0], min(limits[1], math.degrees(sensor_data.gyroscope.z))))
         self.compass = math.degrees(sensor_data.compass)
+
+
+# ==============================================================================
+# -- GnssSensor ----------------------------------------------------------------
+# ==============================================================================
+
+
+class GnssSensor(object):
+    def __init__(self, parent_actor, counter):
+        self.sensor = None
+        self._parent = parent_actor
+        self.counter = counter
+        self.lat = 0.0
+        self.lon = 0.0
+        world = self._parent.get_world()
+        bp = world.get_blueprint_library().find('sensor.other.gnss')
+        self.sensor = world.spawn_actor(bp, carla.Transform(carla.Location(x=1.0, z=2.8)), attach_to=self._parent)
+        # We need to pass the lambda a weak reference to self to avoid circular
+        # reference.
+        weak_self = weakref.ref(self)
+        self.sensor.listen(lambda event: GnssSensor._on_gnss_event(weak_self, event))
+
+    @staticmethod
+    def _on_gnss_event(weak_self, event):
+        self = weak_self()
+        self.counter.received_sensor_n(1, event)
+        if not self:
+            return
+        self.lat = event.latitude
+        self.lon = event.longitude
 
 
 # ==============================================================================
@@ -682,7 +758,7 @@ class CameraManager(object):
     @staticmethod
     def _parse_image(weak_self, image):
         self = weak_self()
-        self.counter.received_sensor_n(0, image)
+        #self.counter.received_sensor_n(0, image)
         if not self:
             return
         if self._sensors[self._index][0].startswith('sensor.lidar'):
@@ -735,12 +811,19 @@ def game_loop(args):
 
         def scenario_was_terminated():
             print("Waiting for scenario to end ...")
-            while not world.counter.never_created: # wait until server is created & connected
-                time.sleep(1)
-            world.counter.server.recv(8) # wait until "OK" is received from server
-            world.counter.server = None
+            #while world.counter.never_created: # wait until server is created & connected
+                #time.sleep(1)
+
+            #print('created, now gonna wait for recv')
+            #world.counter.server.recv(8) # wait until "OK" is received from server
+            #print("Received from server command to quit")
+            #world.counter.server.close()
+            # chiudi file
+            #world.counter.server = None
+            world.counter.await_and_close()
 
         t = threading.Thread(target=scenario_was_terminated)
+        t.setDaemon(True)
         t.start()
 
         clock = pygame.time.Clock()
@@ -797,8 +880,8 @@ def main():
     argparser.add_argument(
         '--res',
         metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
+        default='640x480',
+        help='window resolution (default: 640x480)')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]

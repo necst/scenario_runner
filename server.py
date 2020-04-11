@@ -1,4 +1,4 @@
-import socket
+import socket, time
 
 SERVER=None
 CLIENT_CONNECTION = []
@@ -25,7 +25,12 @@ def get_connection():
 def close_connection():
     global CLIENT_CONNECTION
     conn_check = get_connection()
+    print('conn_check is ' + str(conn_check))
     if conn_check is not None:
+        print('about to close')
         conn_check.send(bytes("OK", "utf8"))
+        time.sleep(10)
+        print('sent')
         conn_check.close()
+        print('closed')
         CLIENT_CONNECTION = []
