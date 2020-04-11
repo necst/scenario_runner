@@ -53,6 +53,7 @@ import re
 import time
 import weakref
 import threading
+import csv
 
 try:
     import pygame
@@ -99,9 +100,10 @@ class Counter:
     def __init__(self):
         # ogni elemento della lista e' l'ultimo frame ricevuto per il sensore n, dove n e' l'indice nella lista
         # ie: all_sensors[0] = 1 -> l'ultimo frame ricevuto per il sensore 0 e' 1
-        self.all_sensors = [0]  # 3 sensori
+        self.all_sensors = [0, 0]  # 3 sensori
         self.sensor_readings = [
             [], # lista dei reading del sensore 0
+            []
         ]
         self.server = None
         self.is_started = False
@@ -113,29 +115,50 @@ class Counter:
             self.server.connect(('127.0.0.1', 10423))
             print('Connesso al server')
             self.never_created = False
+
+        #print('RECV FRAME ' + str(reading))
         last_recv_frame = self.all_sensors[n]
         if reading.frame_number > last_recv_frame + 1:
             print('Errore, ricevuto frame number #' + str(reading.frame_number))
-        self.save_readings(n, reading)
         self.all_sensors[n] = reading.frame_number
-        self.fire_if_all_equal()
+        self.sensor_readings[n].append(reading)
+        if self.is_all_equal():
+            self.read_readings()
+            self.send_tick()
+        elif not self.is_started:
+            self.is_started = True
+            self.all_sensors = [0, 0]
+            self.sensor_readings = [[], []]
+            print('NOT ALL RECEIVED, SENDING 1 GRACE TICK')
+            self.send_tick()
 
+    def read_readings(self):
+        # when this function is called, sensor_readings contains all readings from sensors
+        # for past tick
+        # so here we can check size of sensor_readings[0] sensor_readings[1] if different, ERROR
+        # if < 100, do nothing, if >= 100 save to file then reset sensor_readings to empty
+        print("last readings")
+        len_s0 = len(self.sensor_readings[0])
+        len_s1 = len(self.sensor_readings[1])
+        if len_s0 != len_s1:
+            print("ERROR ERROR ERROR")
+        elif len_s0 >= 100:
+            print('saving in progress, len is ' + str(len_s0))
+            self.sensor_readings = [[], []]
+                #with open("imu.csv", 'w', newline='') as myfile:
+                    #wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+                    #wr.writerow(self.sensor_readings[n])
 
-    def save_readings(self, n, reading):
-        if self.is_started:
-            print('reading is ' + str(reading))
-            self.sensor_readings[n].append(reading)
-            if len(self.sensor_readings[n]) > 2000:
-                print('maybe we should save')
-
-    def fire_if_all_equal(self):
+    def is_all_equal(self):
         first = self.all_sensors[0]
         if len(self.all_sensors) > 1:
             for n in self.all_sensors[1:]:
                 if n != first:
-                    return
-        self.is_started = True
-        if self.server is not None:
+                    return False
+        return True
+
+    def send_tick(self):
+        if not self.never_created:
             self.server.send(bytes("OK", 'utf8'))
         else:
             print("socket server not defined.")
@@ -171,6 +194,7 @@ class World(object):
         self.vehicle_name = self.vehicle.type_id
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
+        self.imu_sensor = IMUSensor(self.vehicle, self.counter)
         self.camera_manager = CameraManager(self.vehicle, self.hud, self.counter)
         self.camera_manager.set_sensor(0, notify=False)
         self.controller = None
@@ -189,6 +213,7 @@ class World(object):
         self.vehicle = self.world.spawn_actor(blueprint, start_pose)
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
+        self.imu_sensor = IMUSensor(self.vehicle)
         self.camera_manager = CameraManager(self.vehicle, self.hud)
         self.camera_manager._transform_index = cam_pos_index
         self.camera_manager.set_sensor(cam_index, notify=False)
@@ -219,6 +244,7 @@ class World(object):
             self.camera_manager.sensor,
             self.collision_sensor.sensor,
             self.lane_invasion_sensor.sensor,
+            self.imu_sensor.sensor,
             self.vehicle]
         for actor in actors:
             if actor is not None:
@@ -543,6 +569,44 @@ class LaneInvasionSensor(object):
         self._hud.notification('Crossed line %s' % ' and '.join(text))
 
 
+# ==============================================================================
+# -- IMUSensor -----------------------------------------------------------------
+# ==============================================================================
+
+
+class IMUSensor(object):
+    def __init__(self, parent_actor, counter):
+        self.sensor = None
+        self._parent = parent_actor
+        self.counter = counter
+        self.accelerometer = (0.0, 0.0, 0.0)
+        self.gyroscope = (0.0, 0.0, 0.0)
+        self.compass = 0.0
+        world = self._parent.get_world()
+        bp = world.get_blueprint_library().find('sensor.other.imu')
+        self.sensor = world.spawn_actor(
+            bp, carla.Transform(), attach_to=self._parent)
+        # We need to pass the lambda a weak reference to self to avoid circular
+        # reference.
+        weak_self = weakref.ref(self)
+        self.sensor.listen(lambda sensor_data: IMUSensor._IMU_callback(weak_self, sensor_data))
+
+    @staticmethod
+    def _IMU_callback(weak_self, sensor_data):
+        self = weak_self()
+        self.counter.received_sensor_n(1, sensor_data)
+        if not self:
+            return
+        limits = (-99.9, 99.9)
+        self.accelerometer = (
+            max(limits[0], min(limits[1], sensor_data.accelerometer.x)),
+            max(limits[0], min(limits[1], sensor_data.accelerometer.y)),
+            max(limits[0], min(limits[1], sensor_data.accelerometer.z)))
+        self.gyroscope = (
+            max(limits[0], min(limits[1], math.degrees(sensor_data.gyroscope.x))),
+            max(limits[0], min(limits[1], math.degrees(sensor_data.gyroscope.y))),
+            max(limits[0], min(limits[1], math.degrees(sensor_data.gyroscope.z))))
+        self.compass = math.degrees(sensor_data.compass)
 
 
 # ==============================================================================
@@ -668,11 +732,12 @@ def game_loop(args):
         world = World(client.get_world(), hud)
         controller = KeyboardControl(world, args.autopilot)
 
+
         def scenario_was_terminated():
             print("Waiting for scenario to end ...")
-            while world.counter.server is None:
+            while not world.counter.never_created: # wait until server is created & connected
                 time.sleep(1)
-            world.counter.server.recv(8)
+            world.counter.server.recv(8) # wait until "OK" is received from server
             world.counter.server = None
 
         t = threading.Thread(target=scenario_was_terminated)

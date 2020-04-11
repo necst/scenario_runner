@@ -23,6 +23,7 @@ def get_connection():
         return None
 
 def close_connection():
+    global CLIENT_CONNECTION
     conn_check = get_connection()
     if conn_check is not None:
         conn_check.send(bytes("OK", "utf8"))
