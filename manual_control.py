@@ -112,9 +112,8 @@ class Counter:
         self.never_created = True
         self.name_of_scenario = None
         self.mutex = Lock()
-        self.file_to_write = open(os.path.join("C:/_out/","sensors_log.csv"), "w", newline="")
-        print("Opened file: " + str(self.file_to_write))
-        self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
+        self.file_to_write = None
+        self.dict_writer = None
 
     def received_sensor_n(self, n, reading):
         self.mutex.acquire()
@@ -123,6 +122,9 @@ class Counter:
             self.server.connect(('127.0.0.1', 10423))
             self.name_of_scenario = self.server.recv(256).decode()
             print('Connesso al server, scenario: ', str(self.name_of_scenario))
+            self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario) + ".csv"), "w", newline="")
+            print("Open file: ", str(self.file_to_write))
+            self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
             self.never_created = False
         print('RECV FRAME ' + str(reading))
         last_recv_frame = self.all_sensors[n]
