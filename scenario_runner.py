@@ -27,6 +27,7 @@ import signal
 import sys
 import time
 import pkg_resources
+import server
 
 import carla
 
@@ -620,6 +621,13 @@ def main():
     if arguments.route:
         arguments.reloadWorld = True
 
+    server.setup()
+
+    import threading
+    t = threading.Thread(target=server.Server(arguments.scenario).wait_for_client_connection)
+    t.setDaemon(True)
+    t.start()
+
     scenario_runner = None
     result = True
     try:
@@ -636,12 +644,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import socket
-    import server
-    server.setup()
-
-    import threading
-    t = threading.Thread(target=server.wait_for_client_connection)
-    t.setDaemon(True)
-    t.start()
     sys.exit(main())

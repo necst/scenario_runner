@@ -110,6 +110,7 @@ class Counter:
         self.server = None
         self.is_started = False
         self.never_created = True
+        self.name_of_scenario = None
         self.mutex = Lock()
         self.file_to_write = open(os.path.join("C:/_out/","sensors_log.csv"), "w", newline="")
         print("Opened file: " + str(self.file_to_write))
@@ -120,9 +121,9 @@ class Counter:
         if self.never_created:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.connect(('127.0.0.1', 10423))
-            print('Connesso al server')
+            self.name_of_scenario = self.server.recv(256).decode()
+            print('Connesso al server, scenario: ', str(self.name_of_scenario))
             self.never_created = False
-
         print('RECV FRAME ' + str(reading))
         last_recv_frame = self.all_sensors[n]
         if reading.frame_number > last_recv_frame + 1:
