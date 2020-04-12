@@ -99,7 +99,7 @@ import socket
 import os.path
 
 class Counter:
-    def __init__(self):
+    def __init__(self, scenario_repetition):
         # ogni elemento della lista e' l'ultimo frame ricevuto per il sensore n, dove n e' l'indice nella lista
         # ie: all_sensors[0] = 1 -> l'ultimo frame ricevuto per il sensore 0 e' 1
         self.all_sensors = [0, 0]  # 3 sensori
@@ -114,6 +114,7 @@ class Counter:
         self.mutex = Lock()
         self.file_to_write = None
         self.dict_writer = None
+        self.scenario_repetition = scenario_repetition
 
     def received_sensor_n(self, n, reading):
         self.mutex.acquire()
@@ -122,7 +123,7 @@ class Counter:
             self.server.connect(('127.0.0.1', 10423))
             self.name_of_scenario = self.server.recv(256).decode()
             print('Connesso al server, scenario: ', str(self.name_of_scenario))
-            self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario) + ".csv"), "w", newline="")
+            self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario) + "_" + str(self.scenario_repetition) + ".csv"), "w", newline="")
             print("Open file: ", str(self.file_to_write))
             self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
             self.never_created = False
@@ -222,8 +223,8 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud):
-        self.counter = Counter()
+    def __init__(self, carla_world, hud, scenario_repetition):
+        self.counter = Counter(scenario_repetition)
         self.world = carla_world
         self.mapname = carla_world.get_map().name
         self.hud = hud
@@ -808,7 +809,7 @@ def game_loop(args):
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud)
+        world = World(client.get_world(), hud, args.scenarioRepetition)
         controller = KeyboardControl(world, args.autopilot)
 
 
@@ -885,6 +886,12 @@ def main():
         metavar='WIDTHxHEIGHT',
         default='640x480',
         help='window resolution (default: 640x480)')
+    argparser.add_argument(
+        '-n','--scenarioRepetition',
+        metavar='N',
+        default=1,
+        type=int,
+        help='number of times this scenario was already played')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
