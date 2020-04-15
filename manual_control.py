@@ -223,7 +223,7 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud, scenario_repetition):
+    def __init__(self, carla_world, hud, tm, scenario_repetition):
         self.counter = Counter(scenario_repetition)
         self.world = carla_world
         self.mapname = carla_world.get_map().name
@@ -239,6 +239,7 @@ class World(object):
                 if vehicle.attributes['role_name'] == "hero":
                     self.vehicle = vehicle
         self.vehicle_name = self.vehicle.type_id
+        self.traffic_manager = tm
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.vehicle, self.hud)
         self.imu_sensor = IMUSensor(self.vehicle, self.counter)
@@ -804,14 +805,20 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(2.0)
 
+        tm = client.get_trafficmanager()
+
         display = pygame.display.set_mode(
             (args.width, args.height),
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud, args.scenarioRepetition)
+        world = World(client.get_world(), hud, tm, args.scenarioRepetition)
         controller = KeyboardControl(world, args.autopilot)
 
+        # make it a dangerous car
+        world.traffic_manager.ignore_lights_percentage(world.vehicle, 100)
+        world.traffic_manager.distance_to_leading_vehicle(world.vehicle, 0)
+        world.traffic_manager.vehicle_percentage_speed_difference(world.vehicle, -20)
 
         def scenario_was_terminated():
             print("Waiting for scenario to end ...")
