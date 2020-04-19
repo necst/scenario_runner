@@ -99,7 +99,7 @@ import socket
 import os.path
 
 class Counter:
-    def __init__(self, scenario_repetition):
+    def __init__(self, scenario_repetition, driving_style_desc=None):
         # ogni elemento della lista e' l'ultimo frame ricevuto per il sensore n, dove n e' l'indice nella lista
         # ie: all_sensors[0] = 1 -> l'ultimo frame ricevuto per il sensore 0 e' 1
         self.all_sensors = [0, 0]  # 3 sensori
@@ -115,6 +115,11 @@ class Counter:
         self.file_to_write = None
         self.dict_writer = None
         self.scenario_repetition = scenario_repetition
+        #self.cc = 0
+        if driving_style_desc is not None:
+            self.driving_style_description = driving_style_desc
+        else:
+            self.driving_style_description="no_descr"
 
     def received_sensor_n(self, n, reading):
         self.mutex.acquire()
@@ -123,7 +128,9 @@ class Counter:
             self.server.connect(('127.0.0.1', 10423))
             self.name_of_scenario = self.server.recv(256).decode()
             print('Connesso al server, scenario: ', str(self.name_of_scenario))
-            self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario) + "_" + str(self.scenario_repetition) + ".csv"), "w", newline="")
+            self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario)
+                                                   + "_" + str(self.driving_style_description)
+                                                   + "_" + str(self.scenario_repetition) + ".csv"), "w", newline="")
             print("Open file: ", str(self.file_to_write))
             self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
             self.never_created = False
@@ -172,7 +179,7 @@ class Counter:
         len_s1 = len(self.sensor_readings[1])
         if len_s0 != len_s1:
             print("ERROR ERROR ERROR")
-        elif len_s0 >= 100:
+        elif len_s0 >= 50:
             print('Saving in progress, len is ' + str(len_s0))
             #rows = zip(self.sensor_readings[0], self.sensor_readings[1])
             #[list(pair) for pair in zip(car_id, car_xy)]
@@ -193,8 +200,11 @@ class Counter:
         return True
 
     def send_tick(self):
+        #print("sending tick: "+str(time.time()) + " " + str(self.cc))
         if not self.never_created:
+            #self.server.send(bytes("OK" + str(self.cc), 'utf8'))
             self.server.send(bytes("OK", 'utf8'))
+            #self.cc += 1
         else:
             print("socket server not defined.")
 
@@ -223,8 +233,8 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud, tm, scenario_repetition):
-        self.counter = Counter(scenario_repetition)
+    def __init__(self, carla_world, hud, tm, scenario_repetition, driving_style_desc):
+        self.counter = Counter(scenario_repetition, driving_style_desc)
         self.world = carla_world
         self.mapname = carla_world.get_map().name
         self.hud = hud
@@ -238,6 +248,7 @@ class World(object):
             for vehicle in possible_vehicles:
                 if vehicle.attributes['role_name'] == "hero":
                     self.vehicle = vehicle
+        self.vehicle.set_simulate_physics(enabled=True)
         self.vehicle_name = self.vehicle.type_id
         self.traffic_manager = tm
         self.collision_sensor = CollisionSensor(self.vehicle, self.hud)
@@ -812,7 +823,7 @@ def game_loop(args):
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud, tm, args.scenarioRepetition)
+        world = World(client.get_world(), hud, tm, args.scenarioRepetition, args.drivingStyleDescription)
         controller = KeyboardControl(world, args.autopilot)
 
         # make it a dangerous car
@@ -899,6 +910,9 @@ def main():
         default=1,
         type=int,
         help='number of times this scenario was already played')
+    argparser.add_argument('-l','--drivingStyleDescription',
+                           action='append',
+                           help='target_speed, pid_lat params, pid_lon params')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
