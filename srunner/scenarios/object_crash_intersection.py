@@ -19,7 +19,8 @@ import carla
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider, CarlaActorPool
 from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTransformSetter,
                                                                       ActorDestroy,
-                                                                      KeepVelocity)
+                                                                      KeepVelocity,
+                                                                      WaypointFollower)
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (InTriggerDistanceToLocationAlongRoute,
                                                                                InTriggerDistanceToVehicle,
@@ -27,6 +28,7 @@ from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (I
 from srunner.scenariomanager.timer import TimeOut
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import generate_target_waypoint
+import srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions as conditions
 
 
 def get_opponent_transform(_start_distance, waypoint, trigger_location, last_waypoint_lane):
@@ -150,6 +152,12 @@ class VehicleTurningRight(BasicScenario):
         first_vehicle.set_simulate_physics(enabled=False)
         self.other_actors.append(first_vehicle)
 
+    #def _setup_scenario_trigger(self, config):
+        """
+        """
+        #print("hello. its turning right")
+        #return None
+
     def _create_behavior(self):
         """
         After invoking this scenario, cyclist will wait for the user
@@ -189,6 +197,7 @@ class VehicleTurningRight(BasicScenario):
 
         # building the tree
         root.add_child(scenario_sequence)
+        root.add_child(WaypointFollower(self.ego_vehicles[0], 5))
         scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform,
                                                          name='TransformSetterTS4'))
         scenario_sequence.add_child(trigger_distance)
