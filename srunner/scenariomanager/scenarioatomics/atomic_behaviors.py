@@ -559,6 +559,10 @@ class ChangeAutoPilot(AtomicBehavior):
         new_status = py_trees.common.Status.SUCCESS
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+
+        if new_status == py_trees.common.Status.SUCCESS:
+            print("Disabled Autopilot!")
+
         return new_status
 
 
@@ -1002,7 +1006,9 @@ class WaypointFollower(AtomicBehavior):
     """
 
     def __init__(self, actor, target_speed=None, plan=None, blackboard_queue_name=None,
-                 avoid_collision=False, name="FollowWaypoints", pid={'K_P': 1.0, 'K_D': 0.01, 'K_I': 0.0, 'dt': 0.05}):
+                 avoid_collision=False, name="FollowWaypoints",
+                 pid_lat={'K_P': 1.95, 'K_D': 0.01, 'K_I': 1.4, 'dt': 0.05},
+                 pid_lon={'K_P': 1.0, 'K_D': 0.0, 'K_I': 1.0, 'dt': 0.05}):
         """
         Set up actor and local planner
         """
@@ -1015,7 +1021,8 @@ class WaypointFollower(AtomicBehavior):
         self._blackboard_queue_name = blackboard_queue_name
         if blackboard_queue_name is not None:
             self._queue = Blackboard().get(blackboard_queue_name)
-        self._args_lateral_dict = pid
+        self._args_lateral_dict = pid_lat
+        self._args_longitudinal_dict = pid_lon
         self._avoid_collision = avoid_collision
         self._unique_id = 0
 
@@ -1067,8 +1074,9 @@ class WaypointFollower(AtomicBehavior):
         else:
             local_planner = LocalPlanner(  # pylint: disable=undefined-variable
                 actor, opt_dict={
-                    'target_speed': self._target_speed * 3.6,
-                    'lateral_control_dict': self._args_lateral_dict})
+                    'target_speed': self._target_speed * 3.6, # da m/s a km/h
+                    'lateral_control_dict': self._args_lateral_dict,
+                    'longitudinal_control_dict': self._args_longitudinal_dict})
 
             if self._plan is not None:
                 if isinstance(self._plan[0], carla.Location):
