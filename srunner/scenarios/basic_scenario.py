@@ -16,6 +16,7 @@ import py_trees
 import srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions as conditions
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenariomanager.scenario_manager import Scenario
+from srunner.scenariomanager.scenarioatomics.atomic_behaviors import ChangeAutoPilot
 
 
 class BasicScenario(object):
@@ -65,7 +66,10 @@ class BasicScenario(object):
         behavior_seq = py_trees.composites.Sequence()
         trigger_behavior = self._setup_scenario_trigger(config)
         if trigger_behavior:
+            # only successful if autopilot is enabled
             behavior_seq.add_child(trigger_behavior)
+            # disable autopilot
+            behavior_seq.add_child(ChangeAutoPilot(self.ego_vehicles[0], activate=False))
 
         if behavior is not None:
             behavior_seq.add_child(behavior)
