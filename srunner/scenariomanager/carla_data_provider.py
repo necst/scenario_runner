@@ -17,6 +17,7 @@ import random
 import re
 from threading import Thread
 from six import iteritems
+import time
 
 import carla
 
@@ -105,20 +106,25 @@ class CarlaDataProvider(object):  # pylint: disable=too-many-public-methods
                 get_connection().recv(8)
             except:
                 print("The socket connection terminated (or had problems)!")
-        t = Thread(target=CarlaDataProvider.pretty_world_tick)
-        t.daemon = True
-        t.start()
-        t.join(float(timeout))
-        if False and t.is_alive():
-            raise RuntimeError("Timeout of CARLA tick command")
+        #start = time.time()
+        #print("about to tick ...")
+        CarlaDataProvider._world.tick()
+        #t = Thread(target=CarlaDataProvider.pretty_world_tick)
+        #t.daemon = True
+        #t.start()
+        #print("it took " + str(time.time() - start1))
+        #t.join(float(timeout))
+        #if False and t.is_alive():
+        #    raise RuntimeError("Timeout of CARLA tick command")
 
-    @staticmethod
+    #@staticmethod
+    """
     def pretty_world_tick():
-        import time
         #print("about to tick")
         start = time.time()
         CarlaDataProvider._world.tick()
-        #print("it took " + str(time.time() - start))
+        print("it took " + str(time.time() - start))
+    """
 
     @staticmethod
     def on_carla_tick():
