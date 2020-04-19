@@ -39,6 +39,7 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider, Carla
 from srunner.scenariomanager.scenario_manager import ScenarioManager
 # pylint: disable=unused-import
 # For the following includes the pylint check is disabled, as these are accessed via globals()
+from srunner.scenarios.freeride import FreeRide
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle, FollowLeadingVehicleWithObstacle
 from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
