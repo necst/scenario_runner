@@ -28,6 +28,7 @@ import sys
 import time
 import pkg_resources
 import server
+import os
 
 import carla
 
@@ -641,6 +642,13 @@ def main():
         if scenario_runner is not None:
             scenario_runner.destroy()
             del scenario_runner
+
+        filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "close.txt")
+        if not os.path.exists(os.path.dirname(os.path.abspath(__file__))):
+            os.makedirs(os.path.dirname(os.path.abspath(__file__)))
+        f = open(filepath, "a")
+        print(str(f) + " was created!")
+
     return not result
 
 
