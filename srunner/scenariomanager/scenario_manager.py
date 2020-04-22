@@ -15,6 +15,7 @@ import sys
 import time
 
 import py_trees
+import subprocess
 
 from srunner.challenge.autoagents.agent_wrapper import AgentWrapper
 from srunner.challenge.challenge_statistics_manager import ChallengeStatisticsManager
@@ -205,6 +206,10 @@ class ScenarioManager(object):
         Trigger the start of the scenario and wait for it to finish/fail
         """
         print("ScenarioManager: Running scenario {}".format(self.scenario_tree.name))
+        print("Spawning manual_control.py ...")
+        subprocess.Popen(['python', 'manual_control.py', '--host',
+                          'dwarf7.local.necst.it', '-n', '11', '-a'])
+        print("Spawned manual_control.py!")
         self.start_system_time = time.time()
         start_game_time = GameTime.get_time()
 
