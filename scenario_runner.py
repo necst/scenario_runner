@@ -404,7 +404,7 @@ class ScenarioRunner(object):
             if self._args.record:
                 self.client.start_recorder("{}/{}.log".format(os.getenv('ROOT_SCENARIO_RUNNER', "./"), config.name))
             self.manager.load_scenario(scenario, self.agent_instance)
-            self.manager.run_scenario()
+            self.manager.run_scenario(self._args.reps)
 
             # Provide outputs if required
             self._analyze_scenario(config)
@@ -592,6 +592,7 @@ def main():
     parser.add_argument('--timeout', default="10.0",
                         help='Set the CARLA client timeout value in seconds')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + str(VERSION))
+    parser.add_argument('--reps', default=0, help="Number of reps")
     arguments = parser.parse_args()
     # pylint: enable=line-too-long
 
