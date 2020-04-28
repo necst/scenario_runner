@@ -20,11 +20,13 @@ from srunner.scenariomanager.scenarioatomics.atomic_behaviors import (ActorTrans
                                                                       AccelerateToVelocity,
                                                                       HandBrakeVehicle,
                                                                       KeepVelocity,
-                                                                      StopVehicle)
+                                                                      StopVehicle,
+                                                                      WaypointFollower)
 from srunner.scenariomanager.scenarioatomics.atomic_criteria import CollisionTest
 from srunner.scenariomanager.scenarioatomics.atomic_trigger_conditions import (InTriggerDistanceToLocationAlongRoute,
                                                                                InTimeToArrivalToVehicle,
-                                                                               DriveDistance)
+                                                                               DriveDistance,
+                                                                               StandStill)
 from srunner.scenariomanager.timer import TimeOut
 from srunner.scenarios.basic_scenario import BasicScenario
 from srunner.tools.scenario_helper import get_location_in_distance_from_wp
@@ -41,7 +43,7 @@ class StationaryObjectCrossing(BasicScenario):
     This is a single ego vehicle scenario
     """
 
-    def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
+    def __init__(self, world, ego_vehicles, ego_target_speed, ego_brake_value, config, randomize=False, debug_mode=False, criteria_enable=True,
                  timeout=60):
         """
         Setup all relevant parameters and create scenario
@@ -58,6 +60,8 @@ class StationaryObjectCrossing(BasicScenario):
 
         super(StationaryObjectCrossing, self).__init__("Stationaryobjectcrossing",
                                                        ego_vehicles,
+                                                       ego_target_speed,
+                                                       ego_brake_value,
                                                        config,
                                                        world,
                                                        debug_mode,
@@ -80,9 +84,9 @@ class StationaryObjectCrossing(BasicScenario):
         location += offset_location
         location.z += offset['z']
         self.transform = carla.Transform(location, carla.Rotation(yaw=orientation_yaw))
-        static = CarlaActorPool.request_new_actor('static.prop.container', self.transform)
-        static.set_simulate_physics(True)
-        self.other_actors.append(static)
+        #static = CarlaActorPool.request_new_actor('static.prop.container', self.transform)
+        #static.set_simulate_physics(True)
+        #self.other_actors.append(static)
 
     def _create_behavior(self):
         """
@@ -93,21 +97,30 @@ class StationaryObjectCrossing(BasicScenario):
         lane_width = lane_width + (1.25 * lane_width)
 
         # leaf nodes
-        actor_stand = TimeOut(15)
-        actor_removed = ActorDestroy(self.other_actors[0])
-        end_condition = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_distance_driven)
+        #actor_stand = TimeOut(15)
+        #actor_removed = ActorDestroy(self.other_actors[0])
+        #end_condition = DriveDistance(self.ego_vehicles[0], self._ego_vehicle_distance_driven)
 
         # non leaf nodes
         root = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
         scenario_sequence = py_trees.composites.Sequence()
+        drive_and_accelerate = py_trees.composites.Parallel(
+            policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+        end_condition = StandStill(self.ego_vehicles[0], name="Vehicle Stopped", duration=0.1)
 
         # building tree
         root.add_child(scenario_sequence)
-        scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self.transform))
-        scenario_sequence.add_child(actor_stand)
-        scenario_sequence.add_child(actor_removed)
+        scenario_sequence.add_child(drive_and_accelerate)
+        scenario_sequence.add_child(StopVehicle(self.ego_vehicles[0], brake_value=self.ego_brake_value))
         scenario_sequence.add_child(end_condition)
+        #scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self.transform))
+        #scenario_sequence.add_child(actor_stand)
+        #scenario_sequence.add_child(actor_removed)
+        #scenario_sequence.add_child(end_condition)
+
+        drive_and_accelerate.add_child(WaypointFollower(self.ego_vehicles[0], self.ego_target_speed))
+        drive_and_accelerate.add_child(DriveDistance(self.ego_vehicles[0], 25))
 
         return root
 

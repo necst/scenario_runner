@@ -101,7 +101,8 @@ class ScenarioRunner(object):
 
         if args.timeout:
             self.client_timeout = float(args.timeout)
-
+        if args.egoTargetSpeed:
+            self.ego_target_speed = float(args.egoTargetSpeed)
         # First of all, we need to create the client that will send the requests
         # to the simulator. Here we'll assume the simulator is accepting
         # requests in the localhost at port 2000.
@@ -361,6 +362,7 @@ class ScenarioRunner(object):
                 scenario_class = self._get_scenario_class_or_fail(config.type)
                 scenario = scenario_class(self.world,
                                           self.ego_vehicles,
+                                          self.ego_target_speed,
                                           config,
                                           self._args.randomize,
                                           self._args.debug)
@@ -404,7 +406,7 @@ class ScenarioRunner(object):
             if self._args.record:
                 self.client.start_recorder("{}/{}.log".format(os.getenv('ROOT_SCENARIO_RUNNER', "./"), config.name))
             self.manager.load_scenario(scenario, self.agent_instance)
-            self.manager.run_scenario(self._args.reps)
+            self.manager.run_scenario(self._args.reps, self._args.egoTargetSpeed)
 
             # Provide outputs if required
             self._analyze_scenario(config)
@@ -593,6 +595,8 @@ def main():
                         help='Set the CARLA client timeout value in seconds')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + str(VERSION))
     parser.add_argument('--reps', default=0, help="Number of reps")
+    parser.add_argument('--egoTargetSpeed', default="10.0",
+                        help='Set the ego vehicle target speed')
     arguments = parser.parse_args()
     # pylint: enable=line-too-long
 

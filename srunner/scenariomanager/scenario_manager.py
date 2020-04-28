@@ -201,15 +201,18 @@ class ScenarioManager(object):
         if self._agent is not None:
             self._agent.setup_sensors(self.ego_vehicles[0], self._debug_mode)
 
-    def run_scenario(self, scenario_reps):
+    def run_scenario(self, scenario_reps, ego_target_speed, ego_brake_value):
         """
         Trigger the start of the scenario and wait for it to finish/fail
         """
         print("Scenario Reps: "+str(scenario_reps))
+        print("Ego Target Speed: " + str(ego_target_speed))
+        ego_target_speed = float(ego_target_speed)*3.6
         print("ScenarioManager: Running scenario {}".format(self.scenario_tree.name))
         print("Spawning manual_control.py ...")
         subprocess.Popen(['python', 'manual_control.py', '--host',
-                          'dwarf7.local.necst.it', '-n', str(scenario_reps), '-a'])
+                          'dwarf7.local.necst.it', '-n', str(scenario_reps), '-a',
+                          '--description', str(ego_target_speed)+"_"+str(ego_brake_value)])
         print("Spawned manual_control.py!")
         self.start_system_time = time.time()
         start_game_time = GameTime.get_time()

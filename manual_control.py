@@ -99,7 +99,7 @@ import socket
 import os.path
 
 class Counter:
-    def __init__(self, scenario_repetition, driving_style_desc=None):
+    def __init__(self, scenario_repetition, ego_target_speed_descr=None):
         # ogni elemento della lista e' l'ultimo frame ricevuto per il sensore n, dove n e' l'indice nella lista
         # ie: all_sensors[0] = 1 -> l'ultimo frame ricevuto per il sensore 0 e' 1
         self.all_sensors = [0, 0]  # 3 sensori
@@ -116,10 +116,10 @@ class Counter:
         self.dict_writer = None
         self.scenario_repetition = scenario_repetition
         #self.cc = 0
-        if driving_style_desc is not None:
-            self.driving_style_description = driving_style_desc
+        if ego_target_speed_descr is not None:
+            self.ego_target_speed_descr = ego_target_speed_descr
         else:
-            self.driving_style_description="no_descr"
+            self.ego_target_speed_descr ="unknown"
 
     def received_sensor_n(self, n, reading):
         self.mutex.acquire()
@@ -129,7 +129,7 @@ class Counter:
             self.name_of_scenario = self.server.recv(256).decode()
             print('Connesso al server, scenario: ', str(self.name_of_scenario))
             self.file_to_write = open(os.path.join("C:/_out/","sensors_log_" + str(self.name_of_scenario)
-                                                   + "_" + str(self.driving_style_description)
+                                                   + "_" + str(self.ego_target_speed_descr)
                                                    + "_" + str(self.scenario_repetition) + ".csv"), "w", newline="")
             print("Open file: ", str(self.file_to_write))
             self.dict_writer = csv.DictWriter(self.file_to_write, fieldnames=["frame", "timestamp", "acc", "gyr", "lat", "lon"])
@@ -157,7 +157,7 @@ class Counter:
         self.sensor_readings[n].append(out)
         print(self.sensor_readings[n])
         if self.is_all_equal():
-            print("ALL EQUAL:")
+            print("ALL EQUAL")
             print(self.all_sensors[0], self.all_sensors[1])
             self.read_readings()
             self.send_tick()
@@ -165,7 +165,7 @@ class Counter:
             self.is_started = True
             self.all_sensors = [0, 0]
             self.sensor_readings = [[], []]
-            print('NOT ALL RECEIVED, SENDING 1 GRACE TICK')
+            print("NOT ALL RECEIVED, SENDING 1 GRACE TICK")
             self.send_tick()
         self.mutex.release()
 
@@ -174,12 +174,12 @@ class Counter:
         # for past tick
         # so here we can check size of sensor_readings[0] sensor_readings[1] if different, ERROR
         # if < 100, do nothing, if >= 100 save to file then reset sensor_readings to empty
-        print("last readings")
+        #print("last readings")
         len_s0 = len(self.sensor_readings[0])
         len_s1 = len(self.sensor_readings[1])
-        if len_s0 != len_s1:
-            print("ERROR ERROR ERROR")
-        elif len_s0 >= 50:
+        #if len_s0 != len_s1:
+            #print("ERROR ERROR ERROR")
+        if len_s0 >= 10:
             print('Saving in progress, len is ' + str(len_s0))
             #rows = zip(self.sensor_readings[0], self.sensor_readings[1])
             #[list(pair) for pair in zip(car_id, car_xy)]
@@ -233,8 +233,8 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud, tm, scenario_repetition, driving_style_desc):
-        self.counter = Counter(scenario_repetition, driving_style_desc)
+    def __init__(self, carla_world, hud, tm, scenario_repetition, ego_target_speed_descr):
+        self.counter = Counter(scenario_repetition, ego_target_speed_descr)
         self.world = carla_world
         self.mapname = carla_world.get_map().name
         self.hud = hud
@@ -823,13 +823,13 @@ def game_loop(args):
             pygame.HWSURFACE | pygame.DOUBLEBUF)
 
         hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud, tm, args.scenarioRepetition, args.drivingStyleDescription)
+        world = World(client.get_world(), hud, tm, args.scenarioRepetition, args.description)
         controller = KeyboardControl(world, args.autopilot)
 
         # make it a dangerous car
         world.traffic_manager.ignore_lights_percentage(world.vehicle, 100)
         world.traffic_manager.distance_to_leading_vehicle(world.vehicle, 0)
-        world.traffic_manager.vehicle_percentage_speed_difference(world.vehicle, -20)
+        #world.traffic_manager.vehicle_percentage_speed_difference(world.vehicle, -20)
 
         def scenario_was_terminated():
             print("Waiting for scenario to end ...")
@@ -910,9 +910,9 @@ def main():
         default=1,
         type=int,
         help='number of times this scenario was already played')
-    argparser.add_argument('-l','--drivingStyleDescription',
-                           action='append',
-                           help='target_speed, pid_lat params, pid_lon params')
+    argparser.add_argument('--description',
+                           default=None,
+                           help='Ego vehicle target speed')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]

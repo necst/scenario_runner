@@ -25,7 +25,7 @@ class BasicScenario(object):
     Base class for user-defined scenario
     """
 
-    def __init__(self, name, ego_vehicles, config, world,
+    def __init__(self, name, ego_vehicles, ego_target_speed, ego_brake_value, config, world,
                  debug_mode=False, terminate_on_failure=False, criteria_enable=False):
         """
         Setup all relevant parameters and create scenario
@@ -43,6 +43,8 @@ class BasicScenario(object):
 
         self.ego_vehicles = ego_vehicles
         self.name = name
+        self.ego_target_speed = ego_target_speed
+        self.ego_brake_value = ego_brake_value
         self.terminate_on_failure = terminate_on_failure
 
         # Initializing adversarial actors

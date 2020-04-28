@@ -76,7 +76,7 @@ class VehicleTurningRight(BasicScenario):
     This is a single ego vehicle scenario
     """
 
-    def __init__(self, world, ego_vehicles, config, randomize=False, debug_mode=False, criteria_enable=True,
+    def __init__(self, world, ego_vehicles, ego_target_speed, ego_brake_value, config, randomize=False, debug_mode=False, criteria_enable=True,
                  timeout=60):
         """
         Setup all relevant parameters and create scenario
@@ -95,10 +95,13 @@ class VehicleTurningRight(BasicScenario):
         # Number of attempts made so far
         self._spawn_attempted = 0
 
+
         self._ego_route = CarlaDataProvider.get_ego_vehicle_route()
 
         super(VehicleTurningRight, self).__init__("VehicleTurningRight",
                                                   ego_vehicles,
+                                                  ego_target_speed,
+                                                  ego_brake_value,
                                                   config,
                                                   world,
                                                   debug_mode,
@@ -185,7 +188,7 @@ class VehicleTurningRight(BasicScenario):
         post_timer_velocity_actor = KeepVelocity(self.other_actors[0], self._other_actor_target_velocity)
         post_timer_traverse_actor = DriveDistance(self.other_actors[0], 0.70 * lane_width)
         #end_condition = TimeOut(5)
-        end_condition = DriveDistance(self.ego_vehicles[0], 30)
+        end_condition = DriveDistance(self.ego_vehicles[0], 80)
 
         # non leaf nodes
         scenario_sequence = py_trees.composites.Sequence()
@@ -198,7 +201,7 @@ class VehicleTurningRight(BasicScenario):
 
         # building the tree
         root.add_child(scenario_sequence)
-        root.add_child(WaypointFollower(self.ego_vehicles[0], 19.4))
+        root.add_child(WaypointFollower(self.ego_vehicles[0], self.ego_target_speed))
                                         #pid_lat={'K_P': 1.95, 'K_D': 0.2, 'K_I': 0.07,'dt': 0.05},
                                         #pid_lon={'K_P': 1.0,'K_D': 0,'K_I': 0.05, 'dt': 0.05}))
         #scenario_sequence.add_child(ActorTransformSetter(self.other_actors[0], self._other_actor_transform,
