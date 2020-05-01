@@ -153,7 +153,6 @@ class Counter:
                "lat": reading.latitude,
                "lon": reading.longitude,
            }
-        #self.sensor_readings[n].append(reading)
         self.sensor_readings[n].append(out)
         print(self.sensor_readings[n])
         if self.is_all_equal():
@@ -167,7 +166,14 @@ class Counter:
             self.sensor_readings = [[], []]
             print("NOT ALL RECEIVED, SENDING 1 GRACE TICK")
             self.send_tick()
+            self.set_timer()
         self.mutex.release()
+
+    def set_timer(self):
+        # start timer
+        print("Setting a timer ...")
+        timer = threading.Timer(5.0, self.send_tick)
+        timer.start()
 
     def read_readings(self):
         # when this function is called, sensor_readings contains all readings from sensors
