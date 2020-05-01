@@ -64,6 +64,9 @@ VERSION = 0.6
 
 SERVER = None
 
+filepath_status = os.path.join(os.path.dirname(os.path.abspath(__file__)), "status.csv")
+f_status = open(filepath_status, "a")
+
 class ScenarioRunner(object):
 
     """
@@ -269,8 +272,10 @@ class ScenarioRunner(object):
 
         if not self.manager.analyze_scenario(self._args.output, filename, junit_filename):
             print("Success!")
+            f_status.write("Success\n")
         else:
             print("Failure!")
+            f_status.write("Failure\n")
         server.close_connection()
 
 
