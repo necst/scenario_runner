@@ -1,8 +1,361 @@
 <?xml version="1.0"?>
 <scenarios>
-    <scenario name="StationaryObjectCrossing_1" type="StationaryObjectCrossing" town="Town02">
-        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.lincoln.mkz2017" />
+    <scenario name="StationaryObjectCrossing_1A" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.citroen.c3" />
     </scenario>
+    <scenario name="StationaryObjectCrossing_1B" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1C" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1D" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1E" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1F" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1G" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1H" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1I" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1L" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1M" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1N" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.mustang.mustang" />
+    </scenario>
+     <scenario name="StationaryObjectCrossing_1O" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_1P" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+    <scenario name="StationaryObjectCrossing_2A" type="StationaryObjectCrossing" town="Town02">
+       <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2B" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2C" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2D" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2E" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2F" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2G" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2H" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2I" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2L" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2M" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2N" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2O" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_2P" type="StationaryObjectCrossing" town="Town02">
+        <ego_vehicle x="180.93" y="105.31" z="1.22" yaw="180" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+
+    <scenario name="StationaryObjectCrossing_3A" type="StationaryObjectCrossing" town="Town03">
+       <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3B" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3C" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3D" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3E" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3F" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3G" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3H" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3I" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3L" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3M" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3N" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3O" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_3P" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="239.39" y="113.42" z="2.36" yaw="270" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+     <scenario name="StationaryObjectCrossing_4A" type="StationaryObjectCrossing" town="Town03">
+       <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4B" type="StationaryObjectCrossing" town="Town03">
+       <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4C" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4D" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4E" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4F" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4G" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4H" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4I" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4L" type="StationaryObjectCrossing" town="Town03">
+        <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4M" type="StationaryObjectCrossing" town="Town03">
+         <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4N" type="StationaryObjectCrossing" town="Town03">
+         <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4O" type="StationaryObjectCrossing" town="Town03">
+         <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_4P" type="StationaryObjectCrossing" town="Town03">
+         <ego_vehicle x="232.36" y="113.29" z="2.46" yaw="90" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+     <scenario name="StationaryObjectCrossing_5A" type="StationaryObjectCrossing" town="Town04">
+       <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5B" type="StationaryObjectCrossing" town="Town04">
+       <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5C" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5D" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5E" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5F" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5G" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5H" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5I" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5L" type="StationaryObjectCrossing" town="Town04">
+        <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+      <scenario name="StationaryObjectCrossing_5M" type="StationaryObjectCrossing" town="Town04">
+         <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5N" type="StationaryObjectCrossing" town="Town04">
+         <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5O" type="StationaryObjectCrossing" town="Town04">
+         <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_5P" type="StationaryObjectCrossing" town="Town04">
+         <ego_vehicle x="156.27" y="18.7" z="10.31" yaw="180" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+    <scenario name="StationaryObjectCrossing_6A" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6B" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6C" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6D" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6E" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6F" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6G" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6H" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6I" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6L" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+     <scenario name="StationaryObjectCrossing_6M" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6N" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6O" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6P" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="-150.70" y="204.97" z="9.65" yaw="0" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+     <scenario name="StationaryObjectCrossing_7A" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7B" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7C" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7D" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7E" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7F" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7G" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7H" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7I" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7L" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+     <scenario name="StationaryObjectCrossing_7M" type="StationaryObjectCrossing" town="Town05">
+         <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7N" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7O" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_7P" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="149.0" y="-104.4" z="0.1" yaw="90" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+
+     <scenario name="StationaryObjectCrossing_8A" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.citroen.c3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8B" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.jeep.wrangler_rubicon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8C" type="StationaryObjectCrossing" town="Town05">
+       <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.mini.cooperst" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8D" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.nissan.micra" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8E" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.seat.leon" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8F" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.toyota.prius" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8G" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.audi.a2" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8H" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.audi.etron" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8I" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.tesla.model3" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_8L" type="StationaryObjectCrossing" town="Town05">
+        <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.mercedes-benz.coupe" />
+    </scenario>
+     <scenario name="StationaryObjectCrossing_6M" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.audi.tt" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6N" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.mustang.mustang" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6O" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.nissan.patrol" />
+    </scenario>
+    <scenario name="StationaryObjectCrossing_6P" type="StationaryObjectCrossing" town="Town05">
+          <ego_vehicle x="138.2" y="116.4" z="0.1" yaw="130" model="vehicle.chevrolet.impala" />
+    </scenario>
+
+
+
+
     <scenario name="DynamicObjectCrossing_1" type="DynamicObjectCrossing" town="Town02">
         <ego_vehicle x="7.63" y="109.91" z="1.22" yaw="359" model="vehicle.lincoln.mkz2017" />
     </scenario>
